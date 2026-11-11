@@ -2,10 +2,18 @@ const request = require('supertest');
 const app = require('../server');
 
 describe('Demo app', () => {
-  test('GET / returns greeting', async () => {
+  test('GET / serves the HTML dashboard', async () => {
     const res = await request(app).get('/');
     expect(res.statusCode).toBe(200);
+    expect(res.headers['content-type']).toMatch(/html/);
+    expect(res.text).toMatch(/Jenkins CI\/CD Pipeline/);
+  });
+
+  test('GET /api/info returns greeting JSON', async () => {
+    const res = await request(app).get('/api/info');
+    expect(res.statusCode).toBe(200);
     expect(res.body.message).toMatch(/Jenkins/);
+    expect(res.body).toHaveProperty('version');
   });
 
   test('GET /health returns UP', async () => {
